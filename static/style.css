@@ -1,0 +1,1250 @@
+/*=========================================================
+    JARVIS AI
+    PREMIUM BLACK THEME
+=========================================================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+:root{
+
+    --background:#090909;
+    --sidebar:#101010;
+    --surface:#171717;
+    --surface-light:#1f1f1f;
+
+    --border:#2d2d2d;
+
+    --text:#ffffff;
+    --text-secondary:#9e9e9e;
+
+    --hover:#262626;
+
+    --radius:24px;
+
+}
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+    font-family:'Poppins',sans-serif;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    background:var(--background);
+
+    width:100%;
+    height:100vh;
+
+    overflow:hidden;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:var(--text);
+
+}
+
+/*=============================
+Scrollbar
+=============================*/
+
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#121212;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#333;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#555;
+
+}
+
+/*=============================
+Main Container
+=============================*/
+
+.container{
+
+    width:96%;
+
+    height:95vh;
+
+    display:flex;
+
+    overflow:hidden;
+
+    background:#111111;
+
+    border:1px solid #242424;
+
+    border-radius:28px;
+
+    box-shadow:
+    0 20px 60px rgba(0,0,0,.55);
+
+}
+
+/*=============================
+Sidebar
+=============================*/
+
+.sidebar{
+
+    width:280px;
+
+    background:#0f0f0f;
+
+    border-right:1px solid #242424;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+/*=============================
+Main Content
+=============================*/
+
+.main-content{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    background:#111111;
+
+}
+
+/*=============================
+Buttons
+=============================*/
+
+button{
+
+    cursor:pointer;
+
+    border:none;
+
+    transition:.3s;
+
+}
+
+button:hover{
+
+    transform:translateY(-2px);
+
+}
+
+/*=============================
+Links
+=============================*/
+
+a{
+
+    text-decoration:none;
+
+    color:inherit;
+
+}
+
+/*=============================
+Images
+=============================*/
+
+img{
+
+    display:block;
+
+    max-width:100%;
+
+}
+
+/*=============================
+Fade Animation
+=============================*/
+
+.container{
+
+    animation:fade .8s ease;
+
+}
+
+@keyframes fade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+/*=========================================================
+                    SIDEBAR
+=========================================================*/
+
+.sidebar{
+
+    padding:28px 22px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+}
+
+/*=========================================================
+                    LOGO
+=========================================================*/
+
+.logo-section{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    margin-bottom:40px;
+
+}
+
+.logo-circle{
+
+    width:110px;
+
+    height:110px;
+
+    border-radius:50%;
+
+    background:#181818;
+
+    border:1px solid #2c2c2c;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    transition:.35s;
+
+    margin-bottom:20px;
+
+}
+
+.logo-circle:hover{
+
+    transform:scale(1.05);
+
+    background:#202020;
+
+    box-shadow:0 10px 30px rgba(255,255,255,.05);
+
+}
+
+.logo-circle i{
+
+    font-size:48px;
+
+    color:#ffffff;
+
+}
+
+.logo-section h1{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    letter-spacing:4px;
+
+    color:white;
+
+}
+
+.logo-section p{
+
+    color:#8b8b8b;
+
+    font-size:14px;
+
+    margin-top:6px;
+
+}
+
+/*=========================================================
+                NAVIGATION
+=========================================================*/
+
+.nav-links{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+}
+
+.nav-links a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    padding:16px 20px;
+
+    border-radius:18px;
+
+    color:#d5d5d5;
+
+    transition:.3s;
+
+    font-size:16px;
+
+}
+
+.nav-links a i{
+
+    width:22px;
+
+    text-align:center;
+
+    font-size:18px;
+
+}
+
+.nav-links a:hover{
+
+    background:#1b1b1b;
+
+    color:white;
+
+    transform:translateX(8px);
+
+}
+
+.nav-links .active{
+
+    background:#1c1c1c;
+
+    border:1px solid #2d2d2d;
+
+    color:white;
+
+}
+
+/*=========================================================
+                STATUS CARD
+=========================================================*/
+
+.status-card{
+
+    background:#181818;
+
+    border:1px solid #2d2d2d;
+
+    border-radius:22px;
+
+    padding:22px;
+
+}
+
+.status-card h3{
+
+    font-size:18px;
+
+    margin-bottom:8px;
+
+}
+
+.status-card p{
+
+    color:#909090;
+
+    font-size:14px;
+
+    margin-bottom:18px;
+
+}
+
+.status{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:15px;
+
+}
+
+.dot{
+
+    width:10px;
+
+    height:10px;
+
+    border-radius:50%;
+
+    background:#3bd16f;
+
+    box-shadow:0 0 12px rgba(59,209,111,.45);
+
+}
+
+/*=========================================================
+             SIDEBAR DIVIDER
+=========================================================*/
+
+.nav-links{
+
+    margin-bottom:auto;
+
+    margin-top:20px;
+
+}
+/*=========================================================
+                    HEADER
+=========================================================*/
+
+.header{
+
+    height:85px;
+
+    padding:0 35px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    background:#141414;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.header h2{
+
+    font-size:28px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+    color:white;
+
+}
+
+.header span{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:var(--text-secondary);
+
+    font-size:14px;
+
+}
+
+.header-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+}
+
+.header-actions button{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:16px;
+
+    border:1px solid #2d2d2d;
+
+    background:#1a1a1a;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    transition:.3s;
+
+}
+
+.header-actions button i{
+
+    font-size:18px;
+
+}
+
+.header-actions button:hover{
+
+    background:#242424;
+
+    transform:translateY(-3px);
+
+    box-shadow:0 8px 18px rgba(0,0,0,.35);
+
+}
+
+/*=========================================================
+                    WELCOME
+=========================================================*/
+
+.welcome{
+
+    text-align:center;
+
+    padding:55px 40px 35px;
+
+    animation:fadeUp .7s ease;
+
+}
+/*=============================
+WELCOME AFTER FIRST MESSAGE
+=============================*/
+
+
+
+
+
+
+
+.welcome h1{
+
+    font-size:52px;
+
+    font-weight:700;
+
+    margin-bottom:14px;
+
+    color:white;
+
+}
+
+.welcome h1 span{
+
+    color:#d8d8d8;
+
+}
+
+.welcome p{
+
+    max-width:720px;
+
+    margin:auto;
+
+    color:#9f9f9f;
+
+    font-size:17px;
+
+    line-height:1.8;
+
+}
+
+/*=========================================================
+                  FADE UP ANIMATION
+=========================================================*/
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(25px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+/*=========================================================
+                    CHAT AREA
+=========================================================*/
+
+.chat-area{
+
+    flex:1;
+
+    overflow-y:auto;
+
+    padding:30px 45px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:28px;
+
+}
+/*.chat-started .chat-area{
+
+    padding-top:10px;
+
+}
+
+/*=========================================================
+                    MESSAGE ROW
+=========================================================*/
+
+.message{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:18px;
+
+    animation:messageFade .45s ease;
+
+}
+
+.message.user{
+
+    flex-direction:row-reverse;
+
+}
+
+/*=========================================================
+                    AVATARS
+=========================================================*/
+
+.avatar{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:50%;
+
+    background:#1b1b1b;
+
+    border:1px solid #303030;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-shrink:0;
+
+}
+
+.avatar i{
+
+    font-size:22px;
+
+    color:white;
+
+}
+
+/*=========================================================
+                    MESSAGE BUBBLES
+=========================================================*/
+
+.bubble{
+
+    max-width:82%;
+
+    background:#1a1a1a;
+
+    border:1px solid #2b2b2b;
+
+    border-radius:22px;
+
+    padding:18px 22px;
+
+    transition:.3s;
+
+}
+
+.message.user .bubble{
+
+    background:#242424;
+
+}
+
+.bubble:hover{
+
+    transform:translateY(-2px);
+
+    border-color:#3b3b3b;
+
+}
+
+/*=========================================================
+                MESSAGE HEADER
+=========================================================*/
+
+.message-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:12px;
+
+}
+
+.message-header h4{
+
+    font-size:16px;
+
+    font-weight:600;
+
+    color:white;
+
+}
+
+.message-header span{
+
+    color:#8d8d8d;
+
+    font-size:13px;
+
+}
+
+/*=========================================================
+                    MESSAGE TEXT
+=========================================================*/
+
+.bubble p{
+
+    font-size:15px;
+
+    line-height:1.8;
+
+    color:#d8d8d8;
+
+    white-space:pre-wrap;
+
+    word-break:break-word;
+
+}
+
+/*=========================================================
+                MESSAGE ACTIONS
+=========================================================*/
+
+.message-actions{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-top:18px;
+
+}
+
+.message-actions button{
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:12px;
+
+    background:#202020;
+
+    border:1px solid #303030;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#cfcfcf;
+
+    transition:.3s;
+
+}
+
+.message-actions button:hover{
+
+    background:#2b2b2b;
+
+    color:white;
+
+}
+
+/*=========================================================
+                TYPING INDICATOR
+=========================================================*/
+
+.typing-indicator{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:0 45px 25px;
+
+}
+
+.typing-indicator span{
+
+    width:8px;
+
+    height:8px;
+
+    background:#9d9d9d;
+
+    border-radius:50%;
+
+    animation:bounce 1.2s infinite;
+
+}
+
+.typing-indicator span:nth-child(2){
+
+    animation-delay:.2s;
+
+}
+
+.typing-indicator span:nth-child(3){
+
+    animation-delay:.4s;
+
+}
+
+.typing-indicator p{
+
+    margin-left:10px;
+
+    color:#8f8f8f;
+
+    font-size:14px;
+
+}
+
+/*=========================================================
+                    ANIMATIONS
+=========================================================*/
+
+@keyframes bounce{
+
+    0%{
+
+        transform:translateY(0);
+
+        opacity:.4;
+
+    }
+
+    50%{
+
+        transform:translateY(-8px);
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+        opacity:.4;
+
+    }
+
+}
+
+@keyframes messageFade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(15px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+/*=========================================================
+                    INPUT SECTION
+=========================================================*/
+
+.input-section{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    padding:25px 35px;
+
+    background:#141414;
+
+    border-top:1px solid #2b2b2b;
+
+}
+
+/*=============================
+Input Box
+=============================*/
+
+.input-section input{
+
+    flex:1;
+
+    height:65px;
+
+    background:#1b1b1b;
+
+    border:1px solid #2e2e2e;
+
+    border-radius:18px;
+
+    padding:0 25px;
+
+    color:white;
+
+    font-size:16px;
+
+    transition:.3s;
+
+}
+
+.input-section input::placeholder{
+
+    color:#8d8d8d;
+
+}
+
+.input-section input:focus{
+
+    border-color:#555;
+
+    background:#202020;
+
+}
+
+/*=============================
+Send Button
+=============================*/
+
+#sendBtn{
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:18px;
+
+    background:#ffffff;
+
+    color:#111;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:22px;
+
+    transition:.35s;
+
+}
+
+#sendBtn:hover{
+
+    transform:translateY(-3px) scale(1.05);
+
+    background:#f2f2f2;
+
+    box-shadow:0 12px 30px rgba(255,255,255,.18);
+
+}
+
+#sendBtn:active{
+
+    transform:scale(.96);
+
+}
+
+/*=========================================================
+                    GLASS EFFECT
+=========================================================*/
+
+.header,
+.sidebar,
+.input-section{
+
+    backdrop-filter:blur(18px);
+
+}
+
+/*=========================================================
+                    SELECTION
+=========================================================*/
+
+::selection{
+
+    background:#444;
+
+    color:white;
+
+}
+
+/*=========================================================
+                    RESPONSIVE
+=========================================================*/
+
+@media(max-width:1200px){
+
+.sidebar{
+
+    width:240px;
+
+}
+
+.logo-circle{
+
+    width:90px;
+    height:90px;
+
+}
+
+.logo-section h1{
+
+    font-size:28px;
+
+}
+
+}
+
+@media(max-width:900px){
+
+.sidebar{
+
+    display:none;
+
+}
+
+.container{
+
+    width:100%;
+
+    height:100vh;
+
+    border-radius:0;
+
+}
+
+.header{
+
+    padding:20px;
+
+}
+
+.chat-area{
+
+    padding:25px;
+
+}
+
+.typing-indicator{
+
+    padding:0 25px 20px;
+
+}
+
+.input-section{
+
+    padding:20px;
+
+}
+
+}
+
+@media(max-width:600px){
+
+.welcome h1{
+
+    font-size:36px;
+
+}
+
+.welcome p{
+
+    font-size:15px;
+
+}
+
+.bubble{
+
+    max-width:90%;
+
+}
+
+.header h2{
+
+    font-size:22px;
+
+}
+
+.header span{
+
+    display:none;
+
+}
+
+.input-section input{
+
+    font-size:15px;
+
+}
+
+}
+
+/*=========================================================
+                PREMIUM HOVER EFFECTS
+=========================================================*/
+
+.status-card,
+.bubble,
+.header,
+.input-section{
+
+    transition:.35s;
+
+}
+
+.status-card:hover{
+
+    border-color:#404040;
+
+    transform:translateY(-4px);
+
+}
+
+.bubble:hover{
+
+    box-shadow:0 10px 30px rgba(0,0,0,.28);
+
+}
+
+.header:hover{
+
+    background:#181818;
+
+}
+
+.input-section:hover{
+
+    background:#181818;
+
+}
+
+/*=========================================================
+                    SMOOTH TRANSITIONS
+=========================================================*/
+
+*{
+
+    transition:
+    background .3s,
+    color .3s,
+    border-color .3s,
+    transform .3s,
+    box-shadow .3s;
+
+}
+
+/*=========================================================
+                    REMOVE UGLY OUTLINES
+=========================================================*/
+
+button:focus,
+input:focus{
+
+    outline:none;
+
+}
+
+/*=========================================================
+                    END
+=========================================================*/

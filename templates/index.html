@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>JARVIS AI</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ================= Sidebar ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo-section">
+
+            <div class="logo-circle">
+
+                <i class="fa-solid fa-robot"></i>
+
+            </div>
+
+            <h1>JARVIS v1.0</h1>
+
+            <p>Artificial Intelligence Assistant</p>
+
+        </div>
+
+
+        <nav class="nav-links">
+
+            <a href="#" class="active">
+
+                <i class="fa-solid fa-comment"></i>
+
+                <span>New Chat</span>
+
+            </a>
+
+            <a href="#">
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                <span>History</span>
+
+            </a>
+
+            <a href="#">
+
+                <i class="fa-solid fa-gear"></i>
+
+                <span>Settings</span>
+
+            </a>
+
+            <a href="#">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <span>About</span>
+
+            </a>
+
+        </nav>
+
+        <div class="status-card">
+
+            <h3>System Status</h3>
+
+            <p>Version 1.0</p>
+
+            <div class="status">
+
+                <span class="dot"></span>
+
+                Online
+
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- ================= Main Section ================= -->
+
+    <section class="main-content">
+
+        <!-- Header -->
+
+        <header class="header">
+
+            <div>
+
+                <h2>JARVIS</h2>
+
+                <span>Artificial Intelligence Assistant</span>
+
+            </div>
+
+            <div class="header-actions">
+
+                <button id="themeBtn">
+
+                    <i class="fa-solid fa-moon"></i>
+
+                </button>
+
+                <button id="clearChat">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                </button>
+
+            </div>
+
+        </header>
+
+        <!-- Welcome -->
+
+        
+
+        <!-- Chat -->
+
+        <main class="chat-area" id="chatArea">
+
+            <!-- AI -->
+
+            <div class="message bot">
+
+                <div class="avatar">
+
+                    <i class="fa-solid fa-robot"></i>
+
+                </div>
+
+                <div class="bubble">
+
+                    <div class="message-header">
+
+                        <h4>JARVIS</h4>
+
+                        <span>Now</span>
+
+                    </div>
+
+                    <p>
+
+                        Hello!
+
+                        I'm JARVIS,
+
+                        your personal AI assistant.
+
+                        How can I help you today?
+
+                    </p>
+
+                    <div class="message-actions">
+
+                        <button>
+
+                            <i class="fa-regular fa-copy"></i>
+
+                        </button>
+
+                        <button>
+
+                            <i class="fa-regular fa-thumbs-up"></i>
+
+                        </button>
+
+                        <button>
+
+                            <i class="fa-regular fa-thumbs-down"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+        <!-- Typing -->
+
+        <div class="typing-indicator">
+
+            <span></span>
+
+            <span></span>
+
+            <span></span>
+
+            <p>JARVIS is typing...</p>
+
+        </div>
+
+        <!-- Input -->
+
+        <footer class="input-section">
+
+            <input
+
+                id="userInput"
+
+                type="text"
+
+                placeholder="Type your message here..."
+
+                autocomplete="off"
+
+            >
+
+            <button id="sendBtn">
+
+                <i class="fa-solid fa-paper-plane"></i>
+
+            </button>
+
+        </footer>
+
+    </section>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+
+</html>
