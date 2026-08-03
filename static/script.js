@@ -6,6 +6,9 @@ const chatArea = document.getElementById("chatArea");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 
+const sidebar = document.querySelector(".sidebar");
+const sidebarToggle = document.getElementById("sidebarToggle");
+
 //let chatStarted = false;
 
 // Current Time
@@ -63,6 +66,8 @@ function sendMessage() {
     const text = userInput.value.trim();
 
     if (text === "") return;
+
+    chatArea.classList.add("chat-started");
 
     // Move welcome section up only once
     
@@ -130,5 +135,15 @@ userInput.addEventListener("keydown", function(e){
         sendMessage();
 
     }
+
+});
+
+// ===============================
+// SIDEBAR TOGGLE
+// ===============================
+
+sidebarToggle.addEventListener("click", () => {
+
+    sidebar.classList.toggle("collapsed");
 
 });

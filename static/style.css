@@ -50,9 +50,9 @@ body{
 
     display:flex;
 
-    justify-content:center;
+    justify-content:flex-start;
 
-    align-items:center;
+    align-items:stretch;
 
     color:var(--text);
 
@@ -94,9 +94,9 @@ Main Container
 
 .container{
 
-    width:96%;
+    width:100%;
 
-    height:95vh;
+    height:100vh;
 
     display:flex;
 
@@ -104,12 +104,11 @@ Main Container
 
     background:#111111;
 
-    border:1px solid #242424;
+    border:none;
 
-    border-radius:28px;
+    border-radius:0;
 
-    box-shadow:
-    0 20px 60px rgba(0,0,0,.55);
+    box-shadow:none;
 
 }
 
@@ -129,7 +128,12 @@ Sidebar
 
     flex-direction:column;
 
+    transition:width .3s ease;
+
+    overflow:hidden;
+
 }
+
 
 /*=============================
 Main Content
@@ -226,13 +230,73 @@ Fade Animation
 
 .sidebar{
 
-    padding:28px 22px;
+    width:280px;
+
+    background:#0f0f0f;
+
+    border-right:1px solid #242424;
 
     display:flex;
 
     flex-direction:column;
 
-    justify-content:space-between;
+    padding:20px 16px;
+
+    transition:width .28s ease;
+
+    overflow:hidden;
+
+}
+
+.sidebar.collapsed{
+
+    width:80px;
+
+}
+
+.sidebar-top{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-start;
+
+    margin-bottom:24px;
+
+}
+
+#sidebarToggle{
+
+    width:48px;
+
+    height:48px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#1a1a1a;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    flex-shrink:0;
+
+}
+
+#sidebarToggle:hover{
+
+    background:#252525;
 
 }
 
@@ -248,15 +312,39 @@ Fade Animation
 
     align-items:center;
 
+    justify-content:center;
+
+    margin-top:10px;
+
     margin-bottom:40px;
+
+    transition:all .3s ease;
+
+}
+
+/* Hidden when sidebar is collapsed */
+
+.sidebar.collapsed .logo-section{
+
+    opacity:0;
+
+    transform:translateY(-10px);
+
+    pointer-events:none;
+
+    height:0;
+
+    overflow:hidden;
+
+    margin:0;
 
 }
 
 .logo-circle{
 
-    width:110px;
+    width:90px;
 
-    height:110px;
+    height:90px;
 
     border-radius:50%;
 
@@ -270,9 +358,9 @@ Fade Animation
 
     align-items:center;
 
-    transition:.35s;
+    margin-bottom:18px;
 
-    margin-bottom:20px;
+    transition:all .3s ease;
 
 }
 
@@ -288,21 +376,23 @@ Fade Animation
 
 .logo-circle i{
 
-    font-size:48px;
+    font-size:40px;
 
-    color:#ffffff;
+    color:white;
 
 }
 
 .logo-section h1{
 
-    font-size:34px;
+    font-size:28px;
 
     font-weight:700;
 
-    letter-spacing:4px;
+    letter-spacing:3px;
 
     color:white;
+
+    margin:0;
 
 }
 
@@ -310,7 +400,7 @@ Fade Animation
 
     color:#8b8b8b;
 
-    font-size:14px;
+    font-size:13px;
 
     margin-top:6px;
 
@@ -326,7 +416,9 @@ Fade Animation
 
     flex-direction:column;
 
-    gap:12px;
+    gap:8px;
+
+    flex:1;
 
 }
 
@@ -338,15 +430,21 @@ Fade Animation
 
     gap:18px;
 
-    padding:16px 20px;
+    height:52px;
 
-    border-radius:18px;
+    padding:0 20px;
 
-    color:#d5d5d5;
+    border-radius:14px;
 
-    transition:.3s;
+    text-decoration:none;
 
-    font-size:16px;
+    color:#cfcfcf;
+
+    transition:all .25s ease;
+
+    white-space:nowrap;
+
+    overflow:hidden;
 
 }
 
@@ -360,21 +458,37 @@ Fade Animation
 
 }
 
+.nav-links span{
+
+    transition:opacity .25s ease;
+
+    white-space:nowrap;
+
+}
+
+.sidebar.collapsed .nav-links span{
+
+    opacity:0;
+
+    width:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+}
+
 .nav-links a:hover{
 
     background:#1b1b1b;
 
     color:white;
 
-    transform:translateX(8px);
-
 }
 
-.nav-links .active{
+.nav-links a.active{
 
-    background:#1c1c1c;
-
-    border:1px solid #2d2d2d;
+    background:#252525;
 
     color:white;
 
@@ -384,7 +498,7 @@ Fade Animation
                 STATUS CARD
 =========================================================*/
 
-.status-card{
+/*.status-card{
 
     background:#181818;
 
@@ -444,7 +558,7 @@ Fade Animation
              SIDEBAR DIVIDER
 =========================================================*/
 
-.nav-links{
+/*.nav-links{
 
     margin-bottom:auto;
 
@@ -641,7 +755,17 @@ WELCOME AFTER FIRST MESSAGE
 
     flex-direction:column;
 
+    justify-content:center;
+
     gap:28px;
+
+    transition:all .35s ease;
+
+}
+
+.chat-area.chat-started{
+
+    justify-content:flex-start;
 
 }
 /*.chat-started .chat-area{
@@ -659,16 +783,32 @@ WELCOME AFTER FIRST MESSAGE
     display:flex;
 
     align-items:flex-start;
+    
+    justify-content:flex-start;
 
     gap:18px;
 
+    width:100%;
+
     animation:messageFade .45s ease;
+
+}
+
+.message.bot{
+
+    width:100%;
+
+    justify-content:center;
 
 }
 
 .message.user{
 
     flex-direction:row-reverse;
+
+    justify-content:flex-end;
+
+    width:100%;
 
 }
 
@@ -712,9 +852,31 @@ WELCOME AFTER FIRST MESSAGE
 
 .bubble{
 
-    max-width:82%;
+    max-width:900px;
 
-    background:#1a1a1a;
+    width:100%;
+
+    padding:0;
+
+    background:transparent;
+
+    border:none;
+
+    border-radius:0;
+
+    box-shadow:none;
+
+}
+
+.message.user .bubble{
+
+    width:fit-content;
+
+    max-width:700px;
+
+    margin-left:auto;
+
+    background:#242424;
 
     border:1px solid #2b2b2b;
 
@@ -722,23 +884,8 @@ WELCOME AFTER FIRST MESSAGE
 
     padding:18px 22px;
 
-    transition:.3s;
-
 }
 
-.message.user .bubble{
-
-    background:#242424;
-
-}
-
-.bubble:hover{
-
-    transform:translateY(-2px);
-
-    border-color:#3b3b3b;
-
-}
 
 /*=========================================================
                 MESSAGE HEADER
@@ -758,7 +905,7 @@ WELCOME AFTER FIRST MESSAGE
 
 .message-header h4{
 
-    font-size:16px;
+    font-size:18px;
 
     font-weight:600;
 
@@ -768,9 +915,9 @@ WELCOME AFTER FIRST MESSAGE
 
 .message-header span{
 
-    color:#8d8d8d;
+    color:#9a9a9a;
 
-    font-size:13px;
+    font-size:14px;
 
 }
 
@@ -780,11 +927,11 @@ WELCOME AFTER FIRST MESSAGE
 
 .bubble p{
 
-    font-size:15px;
+    font-size:17px;
 
-    line-height:1.8;
+    line-height:1.85;
 
-    color:#d8d8d8;
+    color:#e4e4e4;
 
     white-space:pre-wrap;
 
@@ -844,7 +991,7 @@ WELCOME AFTER FIRST MESSAGE
 
 .typing-indicator{
 
-    display:flex;
+    display:none;
 
     align-items:center;
 
