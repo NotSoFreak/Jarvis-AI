@@ -9,6 +9,19 @@ const sendBtn = document.getElementById("sendBtn");
 const sidebar = document.querySelector(".sidebar");
 const sidebarToggle = document.getElementById("sidebarToggle");
 
+function scrollToBottom() {
+
+    requestAnimationFrame(() => {
+
+        chatArea.scrollTo({
+            top: chatArea.scrollHeight,
+            behavior: "smooth"
+        });
+
+    });
+
+}
+
 //let chatStarted = false;
 
 // Current Time
@@ -30,16 +43,11 @@ function createMessage(text, sender) {
 
     message.innerHTML = `
 
-        <div class="avatar">
-            <i class="fa-solid ${sender === "bot" ? "fa-robot" : "fa-user"}"></i>
-        </div>
+        
 
         <div class="bubble">
 
-            <div class="message-header">
-                <h4>${sender === "bot" ? "JARVIS" : "You"}</h4>
-                <span>${currentTime()}</span>
-            </div>
+            <div class="message-header"></div>
 
             <p>${text}</p>
 
@@ -48,12 +56,10 @@ function createMessage(text, sender) {
     `;
 
     chatArea.appendChild(message);
+    scrollToBottom();
 
     // Always scroll to newest message
-    message.scrollIntoView({
-        behavior: "smooth",
-        block: "end"
-    });
+    
 
 }
 

@@ -157,105 +157,102 @@
 
         <!-- Chat -->
 
-        <main class="chat-area" id="chatArea">
+<main class="chat-area" id="chatArea">
 
-            <!-- AI -->
+    <!-- AI Welcome Message -->
 
-            <div class="message bot">
+    <div class="message bot">
 
-                <div class="avatar">
+        <div class="bubble">
 
-                    <i class="fa-solid fa-robot"></i>
+            <div class="message-header">
 
-                </div>
-
-                <div class="bubble">
-
-                    <div class="message-header">
-
-                        <h4>JARVIS</h4>
-
-                        <span>Now</span>
-
-                    </div>
-
-                    <p>
-
-                        Hello!
-
-                        I'm JARVIS,
-
-                        your personal AI assistant.
-
-                        How can I help you today?
-
-                    </p>
-
-                    <div class="message-actions">
-
-                        <button>
-
-                            <i class="fa-regular fa-copy"></i>
-
-                        </button>
-
-                        <button>
-
-                            <i class="fa-regular fa-thumbs-up"></i>
-
-                        </button>
-
-                        <button>
-
-                            <i class="fa-regular fa-thumbs-down"></i>
-
-                        </button>
-
-                    </div>
-
-                </div>
+                <h4>JARVIS</h4>
 
             </div>
 
-        </main>
+            <p>
 
-        <!-- Typing -->
+                Hello!
 
-        <div class="typing-indicator">
+                I'm JARVIS,
 
-            <span></span>
+                your personal AI assistant.
 
-            <span></span>
+                How can I help you today?
 
-            <span></span>
+            </p>
 
-            
+            <div class="message-actions">
+
+                <button>
+
+                    <i class="fa-regular fa-copy"></i>
+
+                </button>
+
+                <button>
+
+                    <i class="fa-regular fa-thumbs-up"></i>
+
+                </button>
+
+                <button>
+
+                    <i class="fa-regular fa-thumbs-down"></i>
+
+                </button>
+
+            </div>
 
         </div>
 
+    </div>
+
+    <!-- Typing Indicator -->
+
+    <div class="typing-indicator">
+
+        <span></span>
+
+        <span></span>
+
+        <span></span>
+
+    </div>
+
+</main>
+        <!-- Typing -->
+
+        
+
         <!-- Input -->
 
-        <footer class="input-section">
+<footer class="composer">
 
-            <input
+<div class="composer-box">
 
-                id="userInput"
+    <button id="attachBtn" class="icon-btn">
+        <i class="fa-solid fa-paperclip"></i>
+    </button>
 
-                type="text"
+    <textarea
+        id="userInput"
+        placeholder="Ask JARVIS anything..."
+        rows="1"
+    ></textarea>
 
-                placeholder="Type your message here..."
+    <button id="voiceBtn" class="icon-btn">
+        <i class="fa-solid fa-microphone"></i>
+    </button>
 
-                autocomplete="off"
+    <button id="sendBtn" class="send-btn">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
-            >
+</div>
 
-            <button id="sendBtn">
-
-                <i class="fa-solid fa-paper-plane"></i>
-
-            </button>
-
-        </footer>
+</footer>
 
     </section>
 
