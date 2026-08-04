@@ -8,6 +8,8 @@ const sendBtn = document.getElementById("sendBtn");
 
 const sidebar = document.querySelector(".sidebar");
 const sidebarToggle = document.getElementById("sidebarToggle");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+const welcomeScreen = document.getElementById("welcomeScreen");
 
 function scrollToBottom() {
 
@@ -73,10 +75,20 @@ function sendMessage() {
 
     if (text === "") return;
 
-    chatArea.classList.add("chat-started");
+    // Hide welcome screen on first message
+    if (welcomeScreen) {
 
-    // Move welcome section up only once
-    
+        welcomeScreen.style.opacity = "0";
+
+        setTimeout(() => {
+
+            welcomeScreen.remove();
+
+        }, 500);
+
+    }
+
+    chatArea.classList.add("chat-started");
 
     // User Message
     createMessage(text, "user");
@@ -148,8 +160,41 @@ userInput.addEventListener("keydown", function(e){
 // SIDEBAR TOGGLE
 // ===============================
 
+function isMobile() {
+    return window.matchMedia("(max-width: 768px)").matches;
+}
+
+// Desktop starts collapsed
+if (!isMobile()) {
+    sidebar.classList.add("collapsed");
+}
+
 sidebarToggle.addEventListener("click", () => {
 
-    sidebar.classList.toggle("collapsed");
+    if (isMobile()) {
+
+        sidebar.classList.remove("collapsed");
+        sidebar.classList.toggle("show");
+
+        if (sidebarOverlay) {
+            sidebarOverlay.classList.toggle("show");
+        }
+
+    } else {
+
+        sidebar.classList.toggle("collapsed");
+
+    }
 
 });
+
+if (sidebarOverlay) {
+
+    sidebarOverlay.addEventListener("click", () => {
+
+        sidebar.classList.remove("show");
+        sidebarOverlay.classList.remove("show");
+
+    });
+
+}
