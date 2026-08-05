@@ -1491,7 +1491,7 @@ input:focus{
 
     position:relative;
 
-    z-index:2;
+    z-index:3;
 
     text-align:center;
 
@@ -1499,13 +1499,24 @@ input:focus{
 
 .welcome-content h1{
 
-    font-size:58px;
+    font-size:60px;
 
-    font-weight:700;
-
-    color:var(--text);
+    font-weight:800;
 
     margin-bottom:14px;
+
+    background:linear-gradient(
+        90deg,
+        #4f8dff 0%,
+        #ffffff 50%,
+        #ff4b5f 100%
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+
+    letter-spacing:.5px;
 
 }
 
@@ -1513,36 +1524,162 @@ input:focus{
 
     font-size:20px;
 
-    color:var(--text-secondary);
+    color:#b8b8b8;
 
 }
 
-.welcome-glow{
+/* =====================
+        BLUE GLOW
+===================== */
 
-    animation:glowFloat 8s ease-in-out infinite;
+.welcome-glow{
 
     position:absolute;
 
-    width:700px;
+    width:760px;
 
-    height:700px;
+    height:760px;
 
     border-radius:50%;
 
     background:
     radial-gradient(circle,
-    rgba(255,255,255,.10) 0%,
-    rgba(255,255,255,.04) 35%,
-    rgba(255,255,255,.015) 60%,
-    transparent 80%);
+        rgba(59,130,255,.28) 0%,
+        rgba(59,130,255,.12) 35%,
+        transparent 72%
+    );
 
-    filter:blur(60px);
+    filter:blur(80px);
+
+    animation:blueGlow 8s ease-in-out infinite;
+
+    z-index:1;
+
+   
 
 }
 
-@keyframes glowFloat{
+/* =====================
+        RED GLOW
+===================== */
+
+.welcome-glow::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(circle,
+        rgba(255,59,92,.26) 0%,
+        rgba(255,59,92,.10) 38%,
+        transparent 72%
+    );
+
+    filter:blur(80px);
+
+    transform:translate(120px,90px);
+
+    animation:redGlow 9s ease-in-out infinite;
+
+}
+
+/* =====================
+      WHITE CENTER
+===================== */
+
+.welcome-glow::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+
+    top:50%;
+
+    width:220px;
+
+    height:220px;
+
+    transform:translate(-50%,-50%);
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(circle,
+        rgba(255,255,255,.12),
+        transparent 75%
+    );
+
+    filter:blur(35px);
+
+}
+
+/* =====================
+       ANIMATIONS
+===================== */
+
+@keyframes blueGlow{
 
     0%,100%{
+
+        transform:scale(1);
+        opacity:.9;
+
+    }
+
+    50%{
+
+        transform:scale(1.10);
+        opacity:1;
+
+    }
+
+}
+
+@keyframes redGlow{
+
+    0%,100%{
+
+        transform:translate(120px,90px) scale(1);
+        opacity:.85;
+
+    }
+
+    50%{
+
+        transform:translate(90px,70px) scale(1.12);
+        opacity:1;
+
+    }
+
+}
+
+/* =======================================
+        VOICE LISTENING ANIMATION
+======================================= */
+
+.icon-btn.listening{
+
+    background:#e53935;
+    color:#fff;
+
+    animation:micPulse 1.2s infinite;
+
+    box-shadow:
+        0 0 12px rgba(229,57,53,.5),
+        0 0 28px rgba(229,57,53,.35);
+
+}
+
+@keyframes micPulse{
+
+    0%{
 
         transform:scale(1);
 
@@ -1551,6 +1688,12 @@ input:focus{
     50%{
 
         transform:scale(1.08);
+
+    }
+
+    100%{
+
+        transform:scale(1);
 
     }
 

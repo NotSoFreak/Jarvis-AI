@@ -5,11 +5,14 @@
 const chatArea = document.getElementById("chatArea");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
+const voiceBtn = document.getElementById("voiceBtn");
 
 const sidebar = document.querySelector(".sidebar");
 const sidebarToggle = document.getElementById("sidebarToggle");
 const sidebarOverlay = document.getElementById("sidebarOverlay");
 const welcomeScreen = document.getElementById("welcomeScreen");
+let autoScroll = true;
+let userScrolling = false;
 
 function scrollToBottom() {
 
@@ -24,6 +27,23 @@ function scrollToBottom() {
 
 }
 
+// =======================================
+// AUTO SCROLL CONTROL
+// =======================================
+
+chatArea.addEventListener("scroll", () => {
+
+    const isAtBottom =
+        chatArea.scrollHeight - chatArea.scrollTop - chatArea.clientHeight < 20;
+
+    if (isAtBottom) {
+
+        userScrolling = false;
+
+    }
+
+});
+
 //let chatStarted = false;
 
 // Current Time
@@ -35,6 +55,44 @@ function currentTime() {
         minute: "2-digit"
     });
 }
+
+// =======================================
+// TYPEWRITER EFFECT
+// =======================================
+
+function typeText(element, text) {
+
+    let speed = 8;
+
+if (text.length > 200) speed = 3;
+if (text.length > 500) speed = 0;
+
+    let i = 0;
+
+    function typing() {
+
+    if (i < text.length) {
+
+        element.textContent += text.charAt(i);
+        i++;
+
+        if (!userScrolling) {
+
+    scrollToBottom();
+
+    }
+
+        setTimeout(typing, speed);
+
+    }
+
+}
+
+typing();
+
+}
+
+
 
 // Create Message
 function createMessage(text, sender) {
@@ -51,17 +109,50 @@ function createMessage(text, sender) {
 
             <div class="message-header"></div>
 
-            <p>${text}</p>
+            <p></p>
 
         </div>
 
     `;
 
     chatArea.appendChild(message);
+
+const paragraph = message.querySelector("p");
+
+if (sender === "bot") {
+
+    autoScroll = true;
+    typeText(paragraph, text);
+
+} else {
+
+    paragraph.textContent = text;
     scrollToBottom();
+
+}
 
     // Always scroll to newest message
     
+
+}
+
+// =======================================
+// TEXT TO SPEECH
+// =======================================
+
+function speak(text) {
+
+    speechSynthesis.cancel();
+
+    const speech = new SpeechSynthesisUtterance(text);
+
+    speech.rate = 1;
+    speech.pitch = 1;
+    speech.volume = 1;
+
+    speech.lang = "en-US";
+
+    speechSynthesis.speak(speech);
 
 }
 
@@ -116,11 +207,13 @@ function sendMessage() {
 
     .then(data => {
 
-        document.querySelector(".typing-indicator").style.display = "none";
+    document.querySelector(".typing-indicator").style.display = "none";
 
-        createMessage(data.reply, "bot");
+    createMessage(data.reply, "bot");
 
-    })
+    speak(data.reply);
+
+})
 
     .catch(error => {
 
@@ -155,6 +248,8 @@ userInput.addEventListener("keydown", function(e){
     }
 
 });
+
+
 
 // ===============================
 // SIDEBAR TOGGLE
@@ -198,3 +293,86 @@ if (sidebarOverlay) {
     });
 
 }
+
+// =======================================
+// VOICE RECOGNITION
+// =======================================
+
+const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "en-US";
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+   let listening = false;
+
+voiceBtn.addEventListener("click", () => {
+
+    if (!listening) {
+
+        recognition.start();
+
+    } else {
+
+        recognition.stop();
+
+        // Immediately update the UI
+        listening = false;
+
+        voiceBtn.classList.remove("listening");
+
+        userInput.placeholder = "Ask JARVIS anything...";
+
+    }
+
+});
+
+    recognition.onstart = () => {
+
+    listening = true;
+
+    voiceBtn.classList.add("listening");
+
+    userInput.placeholder = "🎤 Listening...";
+
+};
+
+    recognition.onresult = (event) => {
+
+        const transcript = event.results[0][0].transcript;
+
+        userInput.value = transcript;
+
+        sendMessage();
+
+    };
+
+    recognition.onend = () => {
+
+    listening = false;
+
+    voiceBtn.classList.remove("listening");
+
+    userInput.placeholder = "Ask JARVIS anything...";
+
+};
+
+    rrecognition.onerror = () => {
+
+    listening = false;
+
+    voiceBtn.classList.remove("listening");
+
+    userInput.placeholder = "Ask JARVIS anything...";
+
+};
+
+}
+
+
+
