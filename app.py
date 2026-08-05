@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, jsonify
 from groq import Groq
 from tavily import TavilyClient
 from dotenv import load_dotenv
+from openai import OpenAI
+import google.generativeai as genai
 import os
 
 # ==============================
@@ -16,6 +18,17 @@ load_dotenv()
 
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
+)
+
+# Gemini
+genai.configure(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
+
+# OpenRouter
+openrouter = OpenAI(
+    api_key=os.getenv("OPENROUTER_API_KEY"),
+    base_url="https://openrouter.ai/api/v1"
 )
 
 tavily = TavilyClient(
@@ -61,6 +74,87 @@ def needs_live_search(message):
     message = message.lower()
 
     return any(word in message for word in keywords)
+
+# ==============================
+# AI ENGINE
+# Auto Model Switching
+# ==============================
+
+def ask_ai(messages):
+
+    # -----------------------
+    # 1. Try Groq
+    # -----------------------
+
+    try:
+
+        completion = client.chat.completions.create(
+
+            model="llama-3.3-70b-versatile",
+
+            messages=messages,
+
+            temperature=0.7,
+
+            max_tokens=1024
+
+        )
+
+        return completion.choices[0].message.content
+
+    except Exception as e:
+
+        print("Groq Failed:", e)
+
+
+    # -----------------------
+    # 2. Try Gemini
+    # -----------------------
+
+    try:
+
+        model = genai.GenerativeModel("gemini-2.5-flash")
+
+        prompt = ""
+
+        for msg in messages:
+
+            prompt += f"{msg['role'].upper()}:\n{msg['content']}\n\n"
+
+        response = model.generate_content(prompt)
+
+        return response.text
+
+    except Exception as e:
+
+        print("Gemini Failed:", e)
+
+
+    # -----------------------
+    # 3. Try OpenRouter
+    # -----------------------
+
+    try:
+
+        completion = openrouter.chat.completions.create(
+
+            model="meta-llama/llama-3.3-70b-instruct",
+
+            messages=messages
+
+        )
+
+        return completion.choices[0].message.content
+
+    except Exception as e:
+
+        print("OpenRouter Failed:", e)
+
+
+    return (
+        "I'm sorry, but all AI providers are currently unavailable. "
+        "Please try again in a few moments."
+    )
 
 
 # ==============================

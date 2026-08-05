@@ -13,6 +13,7 @@ const sidebarOverlay = document.getElementById("sidebarOverlay");
 const welcomeScreen = document.getElementById("welcomeScreen");
 let autoScroll = true;
 let userScrolling = false;
+let voiceEnabled = false;
 
 function scrollToBottom() {
 
@@ -146,15 +147,36 @@ function speak(text) {
 
     const speech = new SpeechSynthesisUtterance(text);
 
-    speech.rate = 1;
-    speech.pitch = 1;
+    speech.rate = 0.95;
+    speech.pitch = 0.9;
     speech.volume = 1;
-
     speech.lang = "en-US";
+
+    const voices = speechSynthesis.getVoices();
+
+    // Prefer male voices
+    const maleVoice = voices.find(voice =>
+        voice.name.includes("David") ||
+        voice.name.includes("Mark") ||
+        voice.name.includes("Guy") ||
+        voice.name.includes("Daniel") ||
+        voice.name.includes("Google UK English Male") ||
+        voice.name.includes("English (United States)")
+    );
+
+    if (maleVoice) {
+
+        speech.voice = maleVoice;
+
+    }
 
     speechSynthesis.speak(speech);
 
 }
+
+speechSynthesis.onvoiceschanged = () => {
+    speechSynthesis.getVoices();
+};
 
 // =======================================
 // SEND MESSAGE
