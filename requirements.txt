@@ -3,3 +3,5 @@ gunicorn
 python-dotenv
 groq
 tavily-python
+openai
+google-generativeai
