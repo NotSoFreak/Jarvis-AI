@@ -306,71 +306,79 @@ if (SpeechRecognition) {
     const recognition = new SpeechRecognition();
 
     recognition.lang = "en-US";
-    recognition.interimResults = true;
+    recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
-   let listening = false;
+    let listening = false;
+    let finalTranscript = "";
 
-voiceBtn.addEventListener("click", () => {
+    voiceBtn.addEventListener("click", () => {
 
-    if (!listening) {
+        if (!listening) {
 
-        recognition.start();
+            recognition.start();
 
-    } else {
+        } else {
 
-        recognition.stop();
+            recognition.stop();
 
-        // Immediately update the UI
+            listening = false;
+
+            voiceBtn.classList.remove("listening");
+
+            userInput.placeholder = "Ask JARVIS anything...";
+
+        }
+
+    });
+
+    recognition.onstart = () => {
+
+        listening = true;
+
+        voiceBtn.classList.add("listening");
+
+        userInput.placeholder = "🎤 Listening...";
+
+    };
+
+    recognition.onresult = (event) => {
+
+        finalTranscript = event.results[0][0].transcript;
+
+        userInput.value = finalTranscript;
+
+    };
+
+    recognition.onend = () => {
+
         listening = false;
 
         voiceBtn.classList.remove("listening");
 
         userInput.placeholder = "Ask JARVIS anything...";
 
-    }
+        if (finalTranscript.trim() !== "") {
 
-});
+            sendMessage();
 
-    recognition.onstart = () => {
+            finalTranscript = "";
 
-    listening = true;
-
-    voiceBtn.classList.add("listening");
-
-    userInput.placeholder = "🎤 Listening...";
-
-};
-
-    recognition.onresult = (event) => {
-
-        const transcript = event.results[0][0].transcript;
-
-        userInput.value = transcript;
-
-        sendMessage();
+        }
 
     };
 
-    recognition.onend = () => {
+    recognition.onerror = () => {
 
-    listening = false;
+        listening = false;
 
-    voiceBtn.classList.remove("listening");
+        voiceBtn.classList.remove("listening");
 
-    userInput.placeholder = "Ask JARVIS anything...";
+        userInput.placeholder = "Ask JARVIS anything...";
 
-};
+        finalTranscript = "";
 
-    rrecognition.onerror = () => {
-
-    listening = false;
-
-    voiceBtn.classList.remove("listening");
-
-    userInput.placeholder = "Ask JARVIS anything...";
-
-};
+    };
 
 }
 
