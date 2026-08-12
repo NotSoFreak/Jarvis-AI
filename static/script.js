@@ -1,7 +1,8 @@
 // =======================================
-// JARVIS AI
+// DEXTER APP CONTROLLER
 // =======================================
 
+// DOM Elements
 const chatArea = document.getElementById("chatArea");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
@@ -11,130 +12,324 @@ const sidebar = document.querySelector(".sidebar");
 const sidebarToggle = document.getElementById("sidebarToggle");
 const sidebarOverlay = document.getElementById("sidebarOverlay");
 const welcomeScreen = document.getElementById("welcomeScreen");
-let autoScroll = true;
-let userScrolling = false;
-let voiceEnabled = false;
 
-function scrollToBottom() {
+const activeModelBadge = document.getElementById("activeModelBadge");
+const modelDropdown = document.getElementById("modelDropdown");
 
-    requestAnimationFrame(() => {
+// App State
+let selectedModel = "auto";
+let isVoiceInput = false;
+let userHasScrolledUp = false;
+let lastScrollTop = 0;
 
-        chatArea.scrollTo({
-            top: chatArea.scrollHeight,
-            behavior: "smooth"
-        });
-
-    });
-
-}
+// Purge any stale chat history localStorage key
+try { localStorage.removeItem("dexter_chat_history"); } catch (e) {}
 
 // =======================================
 // AUTO SCROLL CONTROL
 // =======================================
 
-chatArea.addEventListener("scroll", () => {
-
-    const isAtBottom =
-        chatArea.scrollHeight - chatArea.scrollTop - chatArea.clientHeight < 20;
-
-    if (isAtBottom) {
-
-        userScrolling = false;
-
+function scrollToBottom(force = false) {
+    if (force) {
+        userHasScrolledUp = false;
     }
+    if (userHasScrolledUp) return;
+    if (chatArea) {
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+}
 
-});
+if (chatArea) {
+    chatArea.addEventListener("scroll", () => {
+        const threshold = 50;
+        const distanceToBottom = chatArea.scrollHeight - chatArea.scrollTop - chatArea.clientHeight;
 
-//let chatStarted = false;
+        if (chatArea.scrollTop < lastScrollTop && distanceToBottom > threshold) {
+            userHasScrolledUp = true;
+        }
 
-// Current Time
-function currentTime() {
-    const now = new Date();
+        if (distanceToBottom <= threshold) {
+            userHasScrolledUp = false;
+        }
 
-    return now.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit"
+        lastScrollTop = chatArea.scrollTop;
     });
 }
 
+// Current Time Utility
+function currentTime() {
+    const now = new Date();
+    return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
 // =======================================
-// TYPEWRITER EFFECT
+// MARKDOWN & TYPEWRITER EFFECT
 // =======================================
+
+function renderMarkdown(text) {
+    if (typeof marked !== 'undefined') {
+        return marked.parse(text);
+    }
+    return text.replace(/\n/g, '<br>');
+}
 
 function typeText(element, text) {
-
     let speed = 8;
-
-if (text.length > 200) speed = 3;
-if (text.length > 500) speed = 0;
+    if (text.length > 200) speed = 3;
+    if (text.length > 500) speed = 0;
 
     let i = 0;
+    let accumulated = "";
 
     function typing() {
-
-    if (i < text.length) {
-
-        element.textContent += text.charAt(i);
-        i++;
-
-        if (!userScrolling) {
-
-    scrollToBottom();
-
+        if (i < text.length) {
+            accumulated += text.charAt(i);
+            i++;
+            element.innerHTML = renderMarkdown(accumulated);
+            scrollToBottom();
+            setTimeout(typing, speed);
+        } else {
+            element.innerHTML = renderMarkdown(text);
+            scrollToBottom();
+        }
     }
 
-        setTimeout(typing, speed);
-
-    }
-
+    typing();
 }
 
-typing();
-
-}
-
-
-
-// Create Message
+// Create Message Bubble
 function createMessage(text, sender) {
-
+    if (!chatArea) return;
     const message = document.createElement("div");
-
     message.className = `message ${sender}`;
 
     message.innerHTML = `
-
-        
-
-        <div class="bubble">
-
-            <div class="message-header"></div>
-
-            <p></p>
-
-        </div>
-
+        <div class="bubble"></div>
     `;
 
     chatArea.appendChild(message);
 
-const paragraph = message.querySelector("p");
+    const bubble = message.querySelector(".bubble");
 
-if (sender === "bot") {
-
-    autoScroll = true;
-    typeText(paragraph, text);
-
-} else {
-
-    paragraph.textContent = text;
-    scrollToBottom();
-
+    if (sender === "bot") {
+        typeText(bubble, text);
+    } else {
+        const p = document.createElement("p");
+        p.textContent = text;
+        bubble.appendChild(p);
+        scrollToBottom();
+    }
 }
 
-    // Always scroll to newest message
-    
+// =======================================
+// TYPING INDICATOR CONTROLS
+// =======================================
 
+function showTypingIndicator() {
+    let indicator = document.getElementById("typingIndicator");
+
+    if (!indicator) {
+        indicator = document.createElement("div");
+        indicator.id = "typingIndicator";
+        indicator.className = "message bot typing-indicator";
+
+        indicator.innerHTML = `
+            <div class="bubble typing-bubble">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </div>
+        `;
+    }
+
+    if (chatArea) {
+        chatArea.appendChild(indicator);
+        indicator.style.display = "flex";
+        scrollToBottom();
+    }
+}
+
+function hideTypingIndicator() {
+    const indicator = document.getElementById("typingIndicator");
+    if (indicator) {
+        indicator.style.display = "none";
+        indicator.remove();
+    }
+}
+
+// =======================================
+// SEND MESSAGE
+// =======================================
+
+function sendMessage() {
+    if (!userInput) return;
+    const text = userInput.value.trim();
+    if (text === "") return;
+
+    scrollToBottom(true);
+
+    if (welcomeScreen) {
+        welcomeScreen.style.opacity = "0";
+        setTimeout(() => {
+            try { welcomeScreen.remove(); } catch(e){}
+        }, 500);
+    }
+
+    if (chatArea) {
+        chatArea.classList.add("chat-started");
+    }
+
+    createMessage(text, "user");
+    userInput.value = "";
+
+    showTypingIndicator();
+
+    fetch("/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: text,
+            model: selectedModel
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideTypingIndicator();
+
+        const modelNameEl = document.getElementById("modelName");
+        if (modelNameEl && data.model) {
+            modelNameEl.textContent = data.model;
+        }
+
+        createMessage(data.reply, "bot");
+
+        if (isVoiceInput) {
+            speak(data.reply);
+            isVoiceInput = false;
+        }
+    })
+    .catch(error => {
+        hideTypingIndicator();
+        createMessage("Something went wrong. Please check your connection and try again.", "bot");
+        isVoiceInput = false;
+        console.error("Chat error:", error);
+    });
+}
+
+// =======================================
+// MODEL SELECTOR DROPDOWN
+// =======================================
+
+if (activeModelBadge && modelDropdown) {
+    activeModelBadge.addEventListener("click", (e) => {
+        e.stopPropagation();
+        modelDropdown.classList.toggle("show");
+        activeModelBadge.classList.toggle("active");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!modelDropdown.contains(e.target) && !activeModelBadge.contains(e.target)) {
+            modelDropdown.classList.remove("show");
+            activeModelBadge.classList.remove("active");
+        }
+    });
+
+    const items = modelDropdown.querySelectorAll(".model-dropdown-item");
+    items.forEach(item => {
+        item.addEventListener("click", () => {
+            items.forEach(i => i.classList.remove("active"));
+            item.classList.add("active");
+
+            selectedModel = item.getAttribute("data-model");
+
+            const modelDisplayNames = {
+                "auto": "Groq (llama-3.3-70b)",
+                "groq": "Groq (llama-3.3-70b)",
+                "gemini": "Gemini (gemini-1.5-flash)",
+                "openrouter": "OpenRouter (llama-3.3-70b)"
+            };
+
+            const displayName = modelDisplayNames[selectedModel] || "Groq (llama-3.3-70b)";
+            const modelNameEl = document.getElementById("modelName");
+            if (modelNameEl) {
+                modelNameEl.textContent = displayName;
+            }
+
+            modelDropdown.classList.remove("show");
+            activeModelBadge.classList.remove("active");
+        });
+    });
+}
+
+// =======================================
+// BUTTON & KEY BINDINGS
+// =======================================
+
+if (sendBtn) {
+    sendBtn.addEventListener("click", () => {
+        isVoiceInput = false;
+        sendMessage();
+    });
+}
+
+if (userInput) {
+    userInput.addEventListener("keydown", function(e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            isVoiceInput = false;
+            sendMessage();
+        }
+    });
+}
+
+// =======================================
+// SIDEBAR TOGGLE
+// =======================================
+
+function isMobile() {
+    return window.matchMedia("(max-width: 768px)").matches;
+}
+
+const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+
+if (sidebar) {
+    if (!isMobile()) {
+        sidebar.classList.add("collapsed");
+    }
+
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener("click", () => {
+            if (isMobile()) {
+                sidebar.classList.remove("collapsed");
+                sidebar.classList.toggle("show");
+                if (sidebarOverlay) {
+                    sidebarOverlay.classList.toggle("show");
+                }
+            } else {
+                sidebar.classList.toggle("collapsed");
+            }
+        });
+    }
+
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            sidebar.classList.remove("collapsed");
+            sidebar.classList.toggle("show");
+            if (sidebarOverlay) {
+                sidebarOverlay.classList.toggle("show");
+            }
+        });
+    }
+
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener("click", () => {
+            sidebar.classList.remove("show");
+            sidebarOverlay.classList.remove("show");
+        });
+    }
 }
 
 // =======================================
@@ -142,19 +337,16 @@ if (sender === "bot") {
 // =======================================
 
 function speak(text) {
-
+    if (!window.speechSynthesis) return;
     speechSynthesis.cancel();
 
     const speech = new SpeechSynthesisUtterance(text);
-
     speech.rate = 0.95;
     speech.pitch = 0.9;
     speech.volume = 1;
     speech.lang = "en-US";
 
     const voices = speechSynthesis.getVoices();
-
-    // Prefer male voices
     const maleVoice = voices.find(voice =>
         voice.name.includes("David") ||
         voice.name.includes("Mark") ||
@@ -165,168 +357,26 @@ function speak(text) {
     );
 
     if (maleVoice) {
-
         speech.voice = maleVoice;
-
     }
 
     speechSynthesis.speak(speech);
-
 }
 
-speechSynthesis.onvoiceschanged = () => {
-    speechSynthesis.getVoices();
-};
-
-// =======================================
-// SEND MESSAGE
-// =======================================
-
-function sendMessage() {
-
-    const text = userInput.value.trim();
-
-    if (text === "") return;
-
-    // Hide welcome screen on first message
-    if (welcomeScreen) {
-
-        welcomeScreen.style.opacity = "0";
-
-        setTimeout(() => {
-
-            welcomeScreen.remove();
-
-        }, 500);
-
-    }
-
-    chatArea.classList.add("chat-started");
-
-    // User Message
-    createMessage(text, "user");
-
-    userInput.value = "";
-
-    // Show typing animation
-    document.querySelector(".typing-indicator").style.display = "flex";
-
-    fetch("/chat", {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-            message: text
-        })
-
-    })
-
-    .then(response => response.json())
-
-    .then(data => {
-
-    document.querySelector(".typing-indicator").style.display = "none";
-
-    createMessage(data.reply, "bot");
-
-    speak(data.reply);
-
-})
-
-    .catch(error => {
-
-        document.querySelector(".typing-indicator").style.display = "none";
-
-        createMessage("Something went wrong.", "bot");
-
-        console.log(error);
-
-    });
-
-}
-
-// =======================================
-// BUTTON
-// =======================================
-
-sendBtn.addEventListener("click", sendMessage);
-
-// =======================================
-// ENTER KEY
-// =======================================
-
-userInput.addEventListener("keydown", function(e){
-
-    if(e.key === "Enter" && !e.shiftKey){
-
-        e.preventDefault();
-
-        sendMessage();
-
-    }
-
-});
-
-
-
-// ===============================
-// SIDEBAR TOGGLE
-// ===============================
-
-function isMobile() {
-    return window.matchMedia("(max-width: 768px)").matches;
-}
-
-// Desktop starts collapsed
-if (!isMobile()) {
-    sidebar.classList.add("collapsed");
-}
-
-sidebarToggle.addEventListener("click", () => {
-
-    if (isMobile()) {
-
-        sidebar.classList.remove("collapsed");
-        sidebar.classList.toggle("show");
-
-        if (sidebarOverlay) {
-            sidebarOverlay.classList.toggle("show");
-        }
-
-    } else {
-
-        sidebar.classList.toggle("collapsed");
-
-    }
-
-});
-
-if (sidebarOverlay) {
-
-    sidebarOverlay.addEventListener("click", () => {
-
-        sidebar.classList.remove("show");
-        sidebarOverlay.classList.remove("show");
-
-    });
-
+if (window.speechSynthesis) {
+    speechSynthesis.onvoiceschanged = () => {
+        speechSynthesis.getVoices();
+    };
 }
 
 // =======================================
 // VOICE RECOGNITION
 // =======================================
 
-const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-if (SpeechRecognition) {
-
+if (SpeechRecognition && voiceBtn) {
     const recognition = new SpeechRecognition();
-
     recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
@@ -335,74 +385,43 @@ if (SpeechRecognition) {
     let finalTranscript = "";
 
     voiceBtn.addEventListener("click", () => {
-
         if (!listening) {
-
             recognition.start();
-
         } else {
-
             recognition.stop();
-
             listening = false;
-
             voiceBtn.classList.remove("listening");
-
-            userInput.placeholder = "Ask JARVIS anything...";
-
+            if (userInput) userInput.placeholder = "Ask DEXTER anything...";
         }
-
     });
 
     recognition.onstart = () => {
-
         listening = true;
-
         voiceBtn.classList.add("listening");
-
-        userInput.placeholder = "🎤 Listening...";
-
+        if (userInput) userInput.placeholder = "🎤 Listening...";
     };
 
     recognition.onresult = (event) => {
-
         finalTranscript = event.results[0][0].transcript;
-
-        userInput.value = finalTranscript;
-
+        if (userInput) userInput.value = finalTranscript;
     };
 
     recognition.onend = () => {
-
         listening = false;
-
         voiceBtn.classList.remove("listening");
-
-        userInput.placeholder = "Ask JARVIS anything...";
-
+        if (userInput) userInput.placeholder = "Ask DEXTER anything...";
         if (finalTranscript.trim() !== "") {
-
+            isVoiceInput = true;
             sendMessage();
-
             finalTranscript = "";
-
         }
-
     };
 
     recognition.onerror = () => {
-
         listening = false;
-
         voiceBtn.classList.remove("listening");
-
-        userInput.placeholder = "Ask JARVIS anything...";
-
+        if (userInput) userInput.placeholder = "Ask DEXTER anything...";
         finalTranscript = "";
-
+        isVoiceInput = false;
     };
-
 }
-
-
-

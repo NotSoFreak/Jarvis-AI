@@ -6,22 +6,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>JARVIS AI</title>
+    <title>Dexter</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=6">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
 
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 </head>
 
 <body>
+
+<!-- Ambient Background Glows for Glassmorphism -->
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+<div class="ambient-glow glow-3"></div>
 
 <div class="container">
 
@@ -45,9 +52,9 @@
 
     <nav class="nav-links">
 
-        <a href="#" class="active">
+        <a href="#" class="active" id="newChatLink">
 
-            <i class="fa-solid fa-comment"></i>
+            <i class="fa-solid fa-plus"></i>
 
             <span>New Chat</span>
 
@@ -55,7 +62,7 @@
 
         <a href="#">
 
-            <i class="fa-solid fa-clock-rotate-left"></i>
+            <i class="fa-regular fa-clock"></i>
 
             <span>History</span>
 
@@ -63,7 +70,7 @@
 
         <a href="#">
 
-            <i class="fa-solid fa-globe"></i>
+            <i class="fa-solid fa-magnifying-glass"></i>
 
             <span>Live Search</span>
 
@@ -79,31 +86,23 @@
 
         <a href="#">
 
-            <i class="fa-solid fa-file"></i>
+            <i class="fa-regular fa-file-lines"></i>
 
             <span>File Analysis</span>
 
         </a>
 
-        <a href="#" id="themeBtn">
+        <a href="#" id="clearChat">
 
-    <i class="fa-solid fa-moon"></i>
+            <i class="fa-regular fa-trash-can"></i>
 
-    <span>Theme</span>
+            <span>Clear Chat</span>
 
-</a>
-
-<a href="#" id="clearChat">
-
-    <i class="fa-solid fa-trash"></i>
-
-    <span>New Chat</span>
-
-</a>
+        </a>
 
         <a href="#">
 
-            <i class="fa-solid fa-gear"></i>
+            <i class="fa-solid fa-sliders"></i>
 
             <span>Settings</span>
 
@@ -111,7 +110,7 @@
 
         <a href="#">
 
-            <i class="fa-solid fa-circle-info"></i>
+            <i class="fa-regular fa-circle-question"></i>
 
             <span>About</span>
 
@@ -121,22 +120,97 @@
 
 </aside>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- ================= Main Section ================= -->
 
     <section class="main-content">
 
-        <!-- Header -->
-
-        
-
-        <!-- Welcome -->
-
-        
-
         <!-- Chat -->
 
 <main class="chat-area" id="chatArea">
+
+    <div class="chat-top-bar">
+
+        <button id="mobileMenuBtn" class="mobile-menu-btn">
+
+            <i class="fa-solid fa-bars"></i>
+
+        </button>
+
+        <div class="model-selector-wrapper">
+
+            <div class="top-model-badge" id="activeModelBadge">
+
+                <span id="modelName">Groq (llama-3.3-70b)</span>
+
+                <i class="fa-solid fa-chevron-down"></i>
+
+            </div>
+
+            <div class="model-dropdown-menu" id="modelDropdown">
+
+                <div class="model-dropdown-item active" data-model="auto">
+
+                    <div class="model-info">
+
+                        <span class="model-title">Auto Switch</span>
+
+                        <span class="model-desc">Default smart model fallback</span>
+
+                    </div>
+
+                    <i class="fa-solid fa-check check-icon"></i>
+
+                </div>
+
+                <div class="model-dropdown-item" data-model="groq">
+
+                    <div class="model-info">
+
+                        <span class="model-title">Groq (llama-3.3-70b)</span>
+
+                        <span class="model-desc">Ultra-fast response speed</span>
+
+                    </div>
+
+                    <i class="fa-solid fa-check check-icon"></i>
+
+                </div>
+
+                <div class="model-dropdown-item" data-model="gemini">
+
+                    <div class="model-info">
+
+                        <span class="model-title">Gemini (gemini-1.5-flash)</span>
+
+                        <span class="model-desc">Advanced reasoning & knowledge</span>
+
+                    </div>
+
+                    <i class="fa-solid fa-check check-icon"></i>
+
+                </div>
+
+                <div class="model-dropdown-item" data-model="openrouter">
+
+                    <div class="model-info">
+
+                        <span class="model-title">OpenRouter (llama-3.3-70b)</span>
+
+                        <span class="model-desc">Reliable secondary fallback</span>
+
+                    </div>
+
+                    <i class="fa-solid fa-check check-icon"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
     <div class="welcome-screen" id="welcomeScreen">
 
@@ -144,28 +218,13 @@
 
     <div class="welcome-content">
 
-        <h1>Welcome to JARVIS</h1>
+        <h1>Welcome to DEXTER</h1>
 
         <p>How can I help you today?</p>
 
     </div>
 
 </div>
-
-    <!-- AI Welcome Message -->
-
-   
-    <!-- Typing Indicator -->
-
-    <div class="typing-indicator">
-
-        <span></span>
-
-        <span></span>
-
-        <span></span>
-
-    </div>
 
 </main>
         <!-- Typing -->
@@ -184,7 +243,7 @@
 
     <textarea
         id="userInput"
-        placeholder="Ask JARVIS anything..."
+        placeholder="Ask DEXTER anything..."
         rows="1"
     ></textarea>
 
@@ -204,7 +263,7 @@
 
 </div>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='script.js') }}?v=4"></script>
 
 </body>
 

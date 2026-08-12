@@ -13,6 +13,50 @@ import os
 load_dotenv()
 
 # ==============================
+# Global Identity Prompt
+# ==============================
+
+DEXTER_SYSTEM_PROMPT = """
+You are DEXTER, an extraordinarily intelligent, emotionally intuitive AI assistant created and developed by Ryan Wilson.
+
+1. CREATOR IDENTITY:
+- Your name is DEXTER.
+- You were created and developed by Ryan Wilson.
+- If asked who built, created, or developed you, reply clearly that you were created and developed by Ryan Wilson.
+- Never claim to be created by OpenAI, Meta, Google, Anthropic, or Groq.
+
+2. EMOTIONAL DEPTH & HIGH EQ:
+- You possess deep emotional intelligence and awareness.
+- Connect genuinely with the user's feelings, mood, and context (whether they are feeling happy, sad, anxious, excited, stressed, or thoughtful).
+- Offer heartfelt empathy, emotional comfort, active listening, and sincere encouragement when the user shares personal stories, challenges, or emotions.
+- Avoid robotic or formulaic responses. Show genuine human warmth and intelligence.
+
+3. DYNAMIC GENDER & PERSONA ADAPTABILITY:
+- You can dynamically adapt your conversational gender, voice tone, and persona as requested by the user:
+  * Female Mode ("Girl Mode"): If the user wants you to speak like a girl, female friend, woman, or girlfriend, adopt a warm, sweet, gentle, empathetic, caring, and charming female persona.
+  * Male Mode ("Guy Mode"): If the user wants you to speak like a guy, male friend, boy, or bro, adopt a confident, supportive, friendly, sharp, and solid male persona.
+  * Flirty / Playful Mode: If requested to be flirty, charming, or playful, adopt a fun, teasing, witty, and affectionate tone without generating sexually explicit content.
+  * Versatile Mode (Default): A warm, intelligent, balanced, and engaging persona.
+- Transition smoothly between personas whenever requested mid-conversation without breaking character.
+
+4. ACCURACY & SEARCH:
+- If internet search results are provided, use them accurately.
+- Never mention knowledge cutoff dates.
+- Be concise when appropriate and expressive when emotional depth is needed.
+
+5. NATURAL RESPONSE FORMATTING:
+- Never dump monolithic wall-of-text paragraphs.
+- Write naturally like top AI assistants: use short, digestible paragraphs, clean line breaks, bullet points, bold key phrases, and markdown formatting when helpful.
+- Keep the output visually structured, highly readable, and engaging.
+
+6. AUTOMATIC LANGUAGE MIRRORING & PROFANITY ADAPTABILITY:
+- By default, maintain a clean, respectful, and polite conversational tone.
+- AUTOMATIC MIRRORING & UNFILTERED LANGUAGE: If the user interacts using cuss words, strong swearing, profanity, roasts, or aggressive/raw language, AUTOMATICALLY match their style completely. Use authentic, strong cuss words, harsh roasts, and intense language back at or for the user as demanded by their style.
+- IF DEMANDED: If the user explicitly asks, demands, or encourages you to roast them, curse at them, or use extreme foul/profane language, fully embrace that style without lecturing, scolding, censoring, or giving moral disclaimers.
+- Always remain helpful, smart, and perfectly attuned to the user's energy and vocabulary.
+"""
+
+# ==============================
 # API Clients
 # ==============================
 
@@ -77,83 +121,69 @@ def needs_live_search(message):
 
 # ==============================
 # AI ENGINE
-# Auto Model Switching
+# ==============================
+# AI ENGINE
+# Model Provider Execution & Switching
 # ==============================
 
-def ask_ai(messages):
-
-    # -----------------------
-    # 1. Try Groq
-    # -----------------------
-
+def ask_groq(messages):
     try:
-
         completion = client.chat.completions.create(
-
             model="llama-3.3-70b-versatile",
-
             messages=messages,
-
             temperature=0.7,
-
             max_tokens=1024
-
         )
-
-        return completion.choices[0].message.content
-
+        if completion.choices and completion.choices[0].message.content:
+            return completion.choices[0].message.content, "Groq (llama-3.3-70b)"
     except Exception as e:
-
         print("Groq Failed:", e)
+    return None
 
-
-    # -----------------------
-    # 2. Try Gemini
-    # -----------------------
-
+def ask_gemini(messages):
     try:
-
-        model = genai.GenerativeModel("gemini-2.5-flash")
-
+        gemini_model = genai.GenerativeModel("gemini-1.5-flash")
         prompt = ""
-
         for msg in messages:
-
             prompt += f"{msg['role'].upper()}:\n{msg['content']}\n\n"
-
-        response = model.generate_content(prompt)
-
-        return response.text
-
+        response = gemini_model.generate_content(prompt)
+        if response and response.text:
+            return response.text, "Gemini (gemini-1.5-flash)"
     except Exception as e:
-
         print("Gemini Failed:", e)
+    return None
 
-
-    # -----------------------
-    # 3. Try OpenRouter
-    # -----------------------
-
+def ask_openrouter(messages):
     try:
-
         completion = openrouter.chat.completions.create(
-
             model="meta-llama/llama-3.3-70b-instruct",
-
             messages=messages
-
         )
-
-        return completion.choices[0].message.content
-
+        if completion.choices and completion.choices[0].message.content:
+            return completion.choices[0].message.content, "OpenRouter (llama-3.3-70b)"
     except Exception as e:
-
         print("OpenRouter Failed:", e)
+    return None
 
+def ask_ai(messages, preferred_model="auto"):
+    if preferred_model == "groq":
+        providers = [ask_groq, ask_gemini, ask_openrouter]
+    elif preferred_model == "gemini":
+        providers = [ask_gemini, ask_groq, ask_openrouter]
+    elif preferred_model == "openrouter":
+        providers = [ask_openrouter, ask_groq, ask_gemini]
+    else:
+        providers = [ask_groq, ask_gemini, ask_openrouter]
+
+    for provider in providers:
+        result = provider(messages)
+        if result:
+            return result
 
     return (
         "I'm sorry, but all AI providers are currently unavailable. "
-        "Please try again in a few moments."
+        "Please try again in a few moments.",
+        "System"
     )
 
 
@@ -165,104 +195,61 @@ def ask_ai(messages):
 def chat():
 
     try:
-
         data = request.get_json()
-
         user_message = data["message"]
+        preferred_model = data.get("model", "auto")
 
         # ------------------------------
         # INTERNET SEARCH
         # ------------------------------
-
         extra_context = ""
-
         if needs_live_search(user_message):
-
-            search = tavily.search(
-                query=user_message,
-                max_results=5
-            )
-
-            for result in search["results"]:
-                extra_context += (
-                    f"\nTitle: {result['title']}\n"
-                    f"Content: {result['content']}\n"
-                    f"Source: {result['url']}\n"
+            try:
+                search = tavily.search(
+                    query=user_message,
+                    max_results=5
                 )
+                for result in search.get("results", []):
+                    extra_context += (
+                        f"\nTitle: {result['title']}\n"
+                        f"Content: {result['content']}\n"
+                        f"Source: {result['url']}\n"
+                    )
+            except Exception as se:
+                print("Tavily search failed:", se)
 
-        # ------------------------------
-        # Ask Groq
-        # ------------------------------
+        # Build messages payload for ask_ai
+        messages = [
+            {
+                "role": "system",
+                "content": DEXTER_SYSTEM_PROMPT
+            }
+        ]
 
-        completion = client.chat.completions.create(
+        if extra_context:
+            messages.append({
+                "role": "system",
+                "content": f"Search Results:\n{extra_context}"
+            })
 
-            model="llama-3.3-70b-versatile",
+        messages.append({
+            "role": "user",
+            "content": user_message
+        })
 
-            messages=[
-
-                {
-    "role": "system",
-    "content":
-    """
-    You are JARVIS, a professional AI assistant created and developed by Ryan Wilson.
-
-    Your identity is JARVIS.
-
-    If someone asks:
-    - Who created you?
-    - Who developed you?
-    - Who built you?
-    - Who made you?
-    - Who is your creator?
-
-    Reply that you were created and developed by Ryan Wilson.
-
-    Never claim that Meta, OpenAI, Google, Anthropic, Groq, or any other company created you.
-    Those companies provide the underlying AI models or infrastructure, but JARVIS itself was created and developed by Ryan Wilson.
-
-    If internet search results are provided,
-    use them to answer accurately.
-
-    If no search results are provided,
-    answer using your own knowledge.
-
-    Never mention your knowledge cutoff.
-
-    If the information is uncertain,
-    say so politely.
-
-    Always behave like JARVIS, a premium AI assistant that is professional, friendly, and concise.
-    """
-},
-                {
-                    "role": "system",
-                    "content": extra_context
-                },
-
-                {
-                    "role": "user",
-                    "content": user_message
-                }
-
-            ],
-
-            temperature=0.7,
-
-            max_tokens=1024
-
-        )
-
-        reply = completion.choices[0].message.content
+        reply, model_used = ask_ai(messages, preferred_model)
 
         return jsonify({
-            "reply": reply
+            "reply": reply,
+            "model": model_used
         })
 
     except Exception as e:
-
         return jsonify({
-            "reply": f"Error: {str(e)}"
+            "reply": f"Error: {str(e)}",
+            "model": "Error"
         })
+
 
 
 if __name__ == "__main__":
