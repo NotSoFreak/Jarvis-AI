@@ -129,7 +129,7 @@ def needs_live_search(message):
 def ask_groq(messages):
     try:
         completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="meta-llama/llama-3.3-70b-instruct",
             messages=messages,
             temperature=0.7,
             max_tokens=1024
